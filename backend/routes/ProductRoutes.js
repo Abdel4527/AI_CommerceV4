@@ -13,75 +13,81 @@ router.post("/", protect, admin, async (req, res) => {
     name,
     description,
     price,
-    currency, // Include currency
+    currency,
     discountPrice,
     countInStock,
     sku,
     category,
-    brand,
+    brand, // Include brand
     sizes,
     colors,
     collections,
-    material,
+    material, // Include material
     gender,
     images,
   } = req.body;
 
-  const product = new Product({
-    name,
-    description,
-    price,
-    currency, // Save currency
-    discountPrice,
-    countInStock,
-    sku,
-    category,
-    brand,
-    sizes,
-    colors,
-    collections,
-    material,
-    gender,
-    images,
-    user: req.user._id,
-  });
+  try {
+    const product = new Product({
+      name,
+      description,
+      price,
+      currency,
+      discountPrice,
+      countInStock,
+      sku,
+      category,
+      brand, // Save brand
+      sizes,
+      colors,
+      collections,
+      material, // Save material
+      gender,
+      images,
+      user: req.user._id,
+    });
 
-  const createdProduct = await product.save();
-  res.status(201).json(createdProduct);
+    const createdProduct = await product.save();
+    res.status(201).json(createdProduct);
+  } catch (error) {
+    console.error("Error creating product:", error.message);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 // @route   PUT /api/products/:id
 // @desc    Update a product
 // @access  Private/Admin
-router.put("/:id", async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.id);
+router.put('/:id', protect, admin, async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id);
 
-    if (product) {
-      product.name = req.body.name || product.name;
-      product.description = req.body.description || product.description;
-      product.price = req.body.price || product.price;
-      product.currency = req.body.currency || product.currency; // Update currency
-      product.discountPrice = req.body.discountPrice || product.discountPrice;
-      product.countInStock = req.body.countInStock || product.countInStock;
-      product.sku = req.body.sku || product.sku;
-      product.category = req.body.category || product.category;
-      product.brand = req.body.brand || product.brand;
-      product.sizes = req.body.sizes || product.sizes;
-      product.colors = req.body.colors || product.colors;
-      product.collections = req.body.collections || product.collections;
-      product.material = req.body.material || product.material;
-      product.gender = req.body.gender || product.gender;
-      product.images = req.body.images || product.images;
+        if (product) {
+            product.name = req.body.name || product.name;
+            product.description = req.body.description || product.description;
+            product.price = req.body.price || product.price;
+            product.currency = req.body.currency || product.currency;
+            product.discountPrice = req.body.discountPrice || product.discountPrice;
+            product.countInStock = req.body.countInStock || product.countInStock;
+            product.sku = req.body.sku || product.sku;
+            product.category = req.body.category || product.category;
+            product.brand = req.body.brand || product.brand;
+            product.sizes = req.body.sizes || product.sizes;
+            product.colors = req.body.colors || product.colors;
+            product.collections = req.body.collections || product.collections;
+            product.material = req.body.material || product.material;
+            product.gender = req.body.gender || product.gender;
+            product.images = req.body.images || product.images; // Allow updating images
 
-      const updatedProduct = await product.save();
-      res.json(updatedProduct);
-    } else {
-      res.status(404).json({ message: "Product not found" });
+            const updatedProduct = await product.save();
+            res.json(updatedProduct);
+        } else {
+            res.status(404).json({ message: 'Product not found' });
+        }
+    } catch (error) {
+        console.error('Error updating product:', error.message);
+        res.status(500).json({ message: 'Server error' });
     }
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
 });
 
 // @route   DELETE /api/products/:id
@@ -199,6 +205,20 @@ router.get('/best-seller', async (req, res) => {
     }
 });
 
+router.get("/filters", async (req, res) => {
+    try {
+      const brands = await Product.distinct("brand");
+      const materials = await Product.distinct("material");
+      const categories = await Product.distinct("category");
+      const colors = await Product.distinct("colors");
+      const sizes = await Product.distinct("sizes");
+  
+      res.json({ brands, materials, categories, colors, sizes });
+    } catch (error) {
+      console.error("Error fetching filter options:", error.message);
+      res.status(500).json({ message: "Server error" });
+    }
+  });
 // @route   GET /api/products/new-arrivals
 // @desc    Get new arrival products
 // @access  Public
@@ -265,6 +285,10 @@ router.get('/similar/:id', async (req, res) => {
         res.status(500).send('Server error');
     }
 });
+
+// @route   GET /api/products/filters
+// @desc    Get filter options
+// @access  Public
 
 
 

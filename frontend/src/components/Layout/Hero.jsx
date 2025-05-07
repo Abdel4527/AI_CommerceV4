@@ -13,7 +13,7 @@ const Hero = () => {
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black flex items-center justify-center">
         <div className="text-center text-white p-6 max-w-2xl">
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight uppercase mb-6 leading-tight">
-            Discover <br /> Your Style
+            Discover! <br /> Your Style
           </h1>
           <p className="text-lg md:text-xl text-gray-300 mb-8">
             Shop the latest trends and vacation-ready outfits with fast shipping.

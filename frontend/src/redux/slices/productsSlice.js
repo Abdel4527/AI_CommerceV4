@@ -42,6 +42,31 @@ export const fetchSimilarProducts = createAsyncThunk('products/fetchSimilarProdu
   return response.data;
 });
 
+export const createProduct = createAsyncThunk(
+  "products/createProduct",
+  async (productData, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/products`,
+        productData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`, // Admin token
+          },
+        }
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message
+      );
+    }
+  }
+);
+
 const productsSlice = createSlice({
   name: 'products',
   initialState: {
@@ -144,6 +169,20 @@ const productsSlice = createSlice({
       .addCase(fetchSimilarProducts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload; // Handle errors
+      })
+
+      // Create Product
+      .addCase(createProduct.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createProduct.fulfilled, (state, action) => {
+        state.loading = false;
+        state.products.push(action.payload); // Add the new product to the list
+      })
+      .addCase(createProduct.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });

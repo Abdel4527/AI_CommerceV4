@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { FaBars } from 'react-icons/fa';
 import AdminSidebar from './AdminSidebar';
 import { Outlet } from 'react-router-dom';
+import ChatWidget from '../Common/ChatWidget';
 
 const AdminLayout = () => {
 
@@ -39,6 +40,8 @@ const AdminLayout = () => {
             {/* Main content */}
             <div className="flex-grow p-6 overflow-auto">
                 <Outlet/>
+                {<ChatWidget />}
+
             </div>
         </div>
     );

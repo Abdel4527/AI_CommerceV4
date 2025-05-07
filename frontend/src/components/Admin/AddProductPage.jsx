@@ -1,19 +1,13 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import {
-  fetchProductDetails,
-  updateProduct,
-} from "../../redux/slices/productsSlice";
+import { createProduct } from "../../redux/slices/productsSlice";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const EditProductPage = () => {
+const AddProductPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { id } = useParams();
-  const { selectedProduct, loading, error } = useSelector(
-    (state) => state.products
-  );
+  const { loading, error } = useSelector((state) => state.products);
 
   const [productData, setProductData] = useState({
     name: "",
@@ -27,24 +21,12 @@ const EditProductPage = () => {
     colors: [],
     collections: "",
     material: "",
-    gender: "",
+    gender: "unisex", // Default value
     images: [],
     currency: "USD",
   });
 
-  const [uploading, setUploading] = useState(false); // Image uploading state
-
-  useEffect(() => {
-    if (id) {
-      dispatch(fetchProductDetails(id));
-    }
-  }, [dispatch, id]);
-
-  useEffect(() => {
-    if (selectedProduct) {
-      setProductData(selectedProduct);
-    }
-  }, [selectedProduct]);
+  const [uploading, setUploading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -76,25 +58,16 @@ const EditProductPage = () => {
     }
   };
 
-  const handleDeleteImage = (index) => {
-    setProductData((prevData) => ({
-      ...prevData,
-      images: prevData.images.filter((_, i) => i !== index),
-    }));
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(updateProduct({ id, productData }));
-    navigate("/admin/products");
+    dispatch(createProduct(productData)).then(() => {
+      navigate("/admin/products");
+    });
   };
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="max-w-5xl mx-auto p-6 shadow-md rounded-md">
-      <h2 className="text-3xl font-bold mb-6">Edit Product</h2>
+      <h2 className="text-3xl font-bold mb-6">Add Product</h2>
       <form onSubmit={handleSubmit}>
         {/* Name */}
         <div className="mb-6">
@@ -131,36 +104,7 @@ const EditProductPage = () => {
             value={productData.price}
             onChange={handleChange}
             className="w-full border border-gray-300 rounded-md p-2"
-          />
-        </div>
-
-        {/* Currency */}
-        <div className="mb-6">
-          <label className="block font-semibold mb-2">Currency</label>
-          <select
-            name="currency"
-            value={productData.currency}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded-md p-2"
-          >
-            <option value="USD">USD</option>
-            <option value="EUR">EUR</option>
-            <option value="GBP">GBP</option>
-            <option value="JPY">JPY</option>
-            <option value="AUD">AUD</option>
-            {/* Add more currencies as needed */}
-          </select>
-        </div>
-
-        {/* Count In stock */}
-        <div className="mb-6">
-          <label className="block font-semibold mb-2">Count in Stock</label>
-          <input
-            type="number"
-            name="countInStock"
-            value={productData.countInStock}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded-md p-2"
+            required
           />
         </div>
 
@@ -173,45 +117,76 @@ const EditProductPage = () => {
             value={productData.sku}
             onChange={handleChange}
             className="w-full border border-gray-300 rounded-md p-2"
+            required
           />
         </div>
 
-        {/* Sizes */}
+        {/* Category */}
         <div className="mb-6">
-          <label className="block font-semibold mb-2">
-            Sizes (comma-separated)
-          </label>
+          <label className="block font-semibold mb-2">Category</label>
           <input
             type="text"
-            name="sizes"
-            value={productData.sizes.join(", ")}
-            onChange={(e) =>
-              setProductData({
-                ...productData,
-                sizes: e.target.value.split(",").map((size) => size.trim()),
-              })
-            }
+            name="category"
+            value={productData.category}
+            onChange={handleChange}
             className="w-full border border-gray-300 rounded-md p-2"
+            required
           />
         </div>
 
-        {/* Colors */}
+        {/* Brand */}
         <div className="mb-6">
-          <label className="block font-semibold mb-2">
-            Colors (comma-separated)
-          </label>
+          <label className="block font-semibold mb-2">Brand</label>
           <input
             type="text"
-            name="colors"
-            value={productData.colors.join(", ")}
-            onChange={(e) =>
-              setProductData({
-                ...productData,
-                colors: e.target.value.split(",").map((color) => color.trim()),
-              })
-            }
+            name="brand"
+            value={productData.brand}
+            onChange={handleChange}
             className="w-full border border-gray-300 rounded-md p-2"
+            required
           />
+        </div>
+
+        {/* Collections */}
+        <div className="mb-6">
+          <label className="block font-semibold mb-2">Collections</label>
+          <input
+            type="text"
+            name="collections"
+            value={productData.collections}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-md p-2"
+            required
+          />
+        </div>
+
+        {/* Material */}
+        <div className="mb-6">
+          <label className="block font-semibold mb-2">Material</label>
+          <input
+            type="text"
+            name="material"
+            value={productData.material}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-md p-2"
+            required
+          />
+        </div>
+
+        {/* Gender */}
+        <div className="mb-6">
+          <label className="block font-semibold mb-2">Gender</label>
+          <select
+            name="gender"
+            value={productData.gender}
+            onChange={handleChange}
+            className="w-full border border-gray-300 rounded-md p-2"
+            required
+          >
+            <option value="Men">Male</option>
+            <option value="Women">Female</option>
+            <option value="unisex">Unisex</option>
+          </select>
         </div>
 
         {/* Image Upload */}
@@ -227,13 +202,6 @@ const EditProductPage = () => {
                   alt={image.altText || "Product Image"}
                   className="w-20 h-20 object-cover rounded-md shadow-md"
                 />
-                <button
-                  type="button"
-                  onClick={() => handleDeleteImage(index)}
-                  className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
-                >
-                  &times;
-                </button>
               </div>
             ))}
           </div>
@@ -241,13 +209,15 @@ const EditProductPage = () => {
 
         <button
           type="submit"
-          className="w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition-colors"
+          className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition-colors"
         >
-          Update Product
+          Add Product
         </button>
       </form>
+      {loading && <p>Loading...</p>}
+      {error && <p className="text-red-500">{error}</p>}
     </div>
   );
 };
 
-export default EditProductPage;
+export default AddProductPage;

@@ -18,6 +18,8 @@ import ProductManagement from "./components/Admin/ProductManagement";
 import EditProductPage from "./components/Admin/EditProductPage";
 import OrderManagement from "./components/Admin/OrderManagement";
 import ProtectedRoute from "./components/Common/ProtectedRoute";
+import AIChatbot from "./components/Layout/AIChatbot";
+import AddProductPage from "./components/Admin/AddProductPage";
 
 import { Provider } from "react-redux";
 import store from "./redux/store";
@@ -40,6 +42,9 @@ const App = () => {
             <Route path="order-confirmation" element={<OrderConfirmationPage />} />
             <Route path="order/:id" element={<OrderDetailsPage />} />
             <Route path="my-orders" element={<MyOrders />} />
+            <Route path="ai-chatbot" element={<AIChatbot />} />
+            {/* Protected Routes */}
+
           </Route>
           {/* Admin */}
           <Route
@@ -55,6 +60,7 @@ const App = () => {
             <Route path="products" element={<ProductManagement />} />
             <Route path="products/:id/edit" element={<EditProductPage />} />
             <Route path="orders" element={<OrderManagement />} />
+            <Route path="products/add" element={<AddProductPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
