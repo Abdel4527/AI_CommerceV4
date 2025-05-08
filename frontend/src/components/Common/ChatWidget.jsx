@@ -14,9 +14,9 @@ const ChatWidget = () => {
         const chatSession = await axios.post(
           "https://agentivehub.com/api/chat/session",
           {
-            api_key: "9796b1bb-e60c-495c-bbe7-73413c32338c",
-            assistant_id: "44bef28e-883a-496e-9d2b-f1da1510fdb5",
-          }
+            "api_key": "9796b1bb-e60c-495c-bbe7-73413c32338c",
+             "assistant_id": "c072b85a-2f8d-4585-a270-c2ba2c0df0ab",
+            }
         );
 
         setSessionId(chatSession.data.session_id); // Save session ID
@@ -43,7 +43,7 @@ const ChatWidget = () => {
         api_key: "9796b1bb-e60c-495c-bbe7-73413c32338c",
         session_id: sessionId,
         type: "custom_code",
-        assistant_id: "44bef28e-883a-496e-9d2b-f1da1510fdb5",
+        assistant_id: "c072b85a-2f8d-4585-a270-c2ba2c0df0ab",
         messages: [{ role: "user", content: userMessage }],
       };
 
